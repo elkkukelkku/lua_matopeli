@@ -17,6 +17,21 @@ function reset ()
 	suunta = 'right'
 	ajastin = 0
 	aikaraja = 0.15
+	ruoki()
+	
+end
+
+--funktio ruoan spawnaamiseen
+function ruoki()
+
+	ruoka={}
+	
+	ruokaX=love.math.random(1,leveys)
+	ruokaY=love.math.random(1,korkeus)
+	
+	ruoka.x=ruokaX
+	ruoka.y=ruokaY
+	--pisteen lisäys
 	
 end
 
@@ -32,6 +47,9 @@ function love.draw ()
 	local function piirraRuutu(x,y)
 		love.graphics.rectangle('fill',(x-1)*ruutu,(y-1)*ruutu,ruutu-1,ruutu-1)
 	end
+	
+	love.graphics.setColor(1,.3,.3)
+	piirraRuutu(ruoka.x,ruoka.y)
 	
 	for indekksi,matopala in ipairs(mato) do
 		love.graphics.setColor(0.6,0.9,0.32)
@@ -54,7 +72,7 @@ function love.update(dt)
 	
 		if suunta == 'right' then
 			seuraavaX=seuraavaX+1
-			if seuraavaX > leveys -1 then
+			if seuraavaX > leveys then
 				--gameover
 				pelijatkuu=false
 			end
@@ -68,7 +86,7 @@ function love.update(dt)
 		
 		elseif suunta == 'down' then
 			seuraavaY=seuraavaY+1
-			if seuraavaY > korkeus-1 then
+			if seuraavaY > korkeus then
 				--gameover
 				pelijatkuu=false
 			end
@@ -79,11 +97,19 @@ function love.update(dt)
 				--gameover
 				pelijatkuu=false
 			end
-			
 		end
 		
-		table.insert(mato,1,{x = seuraavaX, y = seuraavaY})
-		table.remove(mato)
+		if pelijatkuu then
+			table.insert(mato,1,{x=seuraavaX,y=seuraavaY})
+			if mato [1].x==ruoka.x and mato [1].y==ruoka.y then
+				ruoki ()
+				if aikaraja>0.2 then
+					aikaraja=aikaraja-0.1
+				end
+			else
+			table.remove(mato)
+			end
+		end
 	end
 end
 
