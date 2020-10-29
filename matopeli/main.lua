@@ -1,8 +1,9 @@
 --funktioita kutsutaan kerran pelin alussa
 --ğŸ¤£
 function love.load ()
-	leveys = 20
-	korkeus = 15
+	leveys = 40
+	korkeus = 21
+	love.window.setMode(leveys*40,korkeus*40)
 	reset()
 end
  
@@ -17,6 +18,7 @@ function reset ()
 	suunta = 'right'
 	ajastin = 0
 	aikaraja = 0.15
+	pisteet=0
 	ruoki()
 	
 end
@@ -29,16 +31,27 @@ function ruoki()
 	ruokaX=love.math.random(1,leveys)
 	ruokaY=love.math.random(1,korkeus)
 	
-	ruoka.x=ruokaX
-	ruoka.y=ruokaY
-	--pisteen lisäys
+	local voiRuokkia=true
+	
+	for indeksi,matopala in ipairs(mato)do
+		if ruokaX==matopala.x and ruokaY==matopala.y then
+			voiRuokkia=false
+		end
+	end
+	
+	if voiRuokkia then
+		ruoka.x=ruokaX
+		ruoka.y=ruokaY
+	else
+		ruoki()
+	end
 	
 end
 
 --funktio peliframien piirtämiseen
 function love.draw ()
 
-	local ruutu = 15
+	local ruutu = 40
 	
 	love.graphics.setColor(.28,.28,.28)
 	
@@ -55,6 +68,8 @@ function love.draw ()
 		love.graphics.setColor(0.6,0.9,0.32)
 		piirraRuutu(matopala.x,matopala.y)
 	end
+	
+	love.graphics.print(pisteet,(leveys-1)*ruutu,0)
 end
 
 function love.update(dt)
@@ -99,9 +114,16 @@ function love.update(dt)
 			end
 		end
 		
+		for indeksi,matopala in ipairs (mato) do
+			if indeksi~= #mato and seuraavaX==matopala.x and seuraavaY==matopala.y then
+				pelijatkuu=false
+			end
+		end
+		--tämä suoritetaan niin kauan kuin ei ole osuttu reunaan tai itseen
 		if pelijatkuu then
 			table.insert(mato,1,{x=seuraavaX,y=seuraavaY})
 			if mato [1].x==ruoka.x and mato [1].y==ruoka.y then
+				pisteet=pisteet+1
 				ruoki ()
 				if aikaraja>0.2 then
 					aikaraja=aikaraja-0.1
@@ -112,7 +134,7 @@ function love.update(dt)
 		end
 	end
 end
-
+--funktio liikkumiseen
 function love.keypressed(key)
 	if key=='right'and pelijatkuu and suunta~='left'then
 		suunta='right'
@@ -122,13 +144,10 @@ function love.keypressed(key)
 		suunta='down'
 	elseif key=='up'and pelijatkuu and suunta~='down'then
 		suunta='up'
+	elseif key=='return'then
+		reset()
 	end
 end
-
-
-
-
-
 
 
 
