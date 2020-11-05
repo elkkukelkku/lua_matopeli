@@ -1,9 +1,9 @@
 --funktioita kutsutaan kerran pelin alussa
 --ðŸ¤£
 function love.load ()
-	leveys = 40
-	korkeus = 21
-	love.window.setMode(leveys*40,korkeus*40)
+	leveys = 27
+	korkeus = 14
+	love.window.setMode(leveys*60,korkeus*60)
 	reset()
 end
  
@@ -51,7 +51,7 @@ end
 --funktio peliframien piirtämiseen
 function love.draw ()
 
-	local ruutu = 40
+	local ruutu = 60
 	
 	love.graphics.setColor(.28,.28,.28)
 	
@@ -70,6 +70,13 @@ function love.draw ()
 	end
 	
 	love.graphics.print(pisteet,(leveys-1)*ruutu,0)
+	
+	if pelijatkuu==false then
+		love.graphics.setColor(1,0,0,25)
+		gameoverText="Game over! points:"..tostring(pisteet).."\n Press enter to start over"
+		love.graphics.print(gameoverText,(leveys/2*ruutu)/2,(korkeus*ruutu)/2)
+	end
+	
 end
 
 function love.update(dt)
@@ -148,7 +155,6 @@ function love.keypressed(key)
 		reset()
 	end
 end
-
 
 
 
